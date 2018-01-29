@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../node_modules/angular/angular.js"></script>
+</head>
+<body>
+    <div ng-app="app">
+        <input type="text" ng-model="txt" />
+    </div>
+    <script>
+        angular.module( 'app', [] )
+            .run(function ( $rootScope ) {
+                $rootScope.txt = 'angular';
+                window.__scope__ = $rootScope;
+            });
+    </script>
+</body>
+</html>
