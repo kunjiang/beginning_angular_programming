@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../node_modules/angular/angular.js"></script>
+    <style>
+        a {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div ng-app ng-init="menu1 = menu2 = menu3 = false">
+        <ul>
+            <li><a class="menu-title" ng-click="menu1 = !menu1">一级菜单1</a>
+                <ul ng-show="menu1">
+                    <li>二级菜单1.1</li>
+                    <li>二级菜单1.2</li>
+                </ul>
+            </li>
+            <li><a class="menu-title" ng-click="menu2 = !menu2">一级菜单2</a>
+                <ul ng-show="menu2">
+                    <li>二级菜单2.1</li>
+                    <li>二级菜单2.2</li>
+                </ul>
+            </li>
+            <li><a class="menu-title" ng-click="menu3 = !menu3">一级菜单3</a>
+                <ul ng-show="menu3">
+                    <li>二级菜单3.1</li>
+                    <li>二级菜单3.2</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

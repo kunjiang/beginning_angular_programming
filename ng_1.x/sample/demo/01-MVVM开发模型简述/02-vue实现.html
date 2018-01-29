@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <style>
+        a {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <ul>
+            <li id="app1"><a class="menu-title" v-on:click="myclick">一级菜单1</a>
+                <ul v-show="ishide">
+                    <li>二级菜单1.1</li>
+                    <li>二级菜单1.2</li>
+                </ul>
+            </li>
+            <li id="app2"><a class="menu-title" v-on:click="show = !show">一级菜单2</a>
+                <ul v-show="show">
+                    <li>二级菜单2.1</li>
+                    <li>二级菜单2.2</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        new Vue({
+            el: '#app1',
+            data: {
+                ishide: false
+            },
+            methods: {
+                myclick: function () {
+                    this.ishide = !this.ishide;
+                }
+            }
+        });
+
+        new Vue({
+            el: '#app2',
+            data: {
+                show: false
+            }
+        });
+    </script>
+</body>
+</html>

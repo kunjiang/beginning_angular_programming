@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        a {
+            cursor: pointer;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <ul>
+            <li><a class="menu-title">一级菜单1</a>
+                <ul>
+                    <li>二级菜单1.1</li>
+                    <li>二级菜单1.2</li>
+                </ul>
+            </li>
+            <li><a class="menu-title">一级菜单2</a>
+                <ul>
+                    <li>二级菜单2.1</li>
+                    <li>二级菜单2.2</li>
+                </ul>
+            </li>
+            <li><a class="menu-title">一级菜单3</a>
+                <ul>
+                    <li>二级菜单3.1</li>
+                    <li>二级菜单3.2</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        var a_list = document.querySelectorAll( '.menu-title' );
+        Array.prototype.slice.call( a_list ).forEach(elem => {
+            elem.onclick = function () {
+                var ul = this.nextSibling.nextSibling;
+                var classNames = ul.className.split( ' ' );
+                var i = -1;
+                if ( ( i = classNames.indexOf( 'hide' ) ) > -1 ) {
+                    classNames.splice( i, 1 );
+                } else {
+                    classNames.push( 'hide' );
+                }
+                ul.className = classNames.join( ' ' );
+            }
+        });
+    
+    </script>
+</body>
+</html>
