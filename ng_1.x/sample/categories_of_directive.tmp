@@ -1,0 +1,80 @@
+- 事件相关指令
+    ngChange
+    ngClick
+    ngDblclick
+    ngMousedown
+    ngMouseup
+    ngMouseover
+    ngMouseenter
+    ngMouseleave
+    ngMousemove
+    ngKeydown
+    ngKeyup
+    ngKeypress
+    ngSubmit
+    ngFocus
+    ngBlur
+    ngCopy
+    ngCut
+    ngPaste
+
+
+
+
+- 属性指令
+    ng-href
+    ng-src
+
+
+- 样式相关指令
+    ngClass
+    ngClassOdd
+    ngClassEven
+    ngCloak
+    ngShow
+    ngHide
+    ngStyle
+
+
+- 表单相关指令
+    ng-disabled
+    ngChecked
+    ngReadonly
+    ngSelected
+    textarea
+    input
+    ngValue
+    ngRequired
+    ngMaxlength
+    ngMinlength
+
+
+
+
+
+- 标签类相关指令
+    a   
+
+- 其他指令
+    ng-app
+    ngBind
+    ngBindHtml(酌情)
+    ngController
+    ngIf
+    ngInclude
+    ngInit
+    ngModel
+    ngRepeat
+
+
+
+
+
+
+
+
+
+
+
+
+
