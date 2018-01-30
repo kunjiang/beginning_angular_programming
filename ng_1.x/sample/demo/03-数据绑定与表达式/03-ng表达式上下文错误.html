@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../node_modules/angular/angular.js"></script>
+</head>
+<body ng-app="app">
+    <input type="text" ng-model="num1">
+    +
+    <input type="text" ng-model="num2">
+    =
+    <span ng-bind=" parseInt( num1 ) + parseInt( num2 ) "></span>
+    <!-- <span ng-bind=" ( num1 - 0 ) + ( num2 - 0 ) "></span> -->
+    <script>
+        angular.module( 'app', [] )
+               .run( function ( $rootScope ) {
+                    $rootScope.parseInt = parseInt;
+               });
+    
+    </script>
+</body>
+</html>
