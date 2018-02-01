@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../node_modules/angular/angular.js"></script>
+    <style>
+        .light {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body ng-app="app">
+    <table border="1" width="1200">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>出生年月</th>
+                <th>入职时间</th>
+                <th>家庭住址</th>
+                <th>邮箱</th>
+                <th>电话</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in list" 
+                ng-mouseover="over = 1" 
+                ng-mouseleave="over = 0" 
+                class="{{ over ? 'light' : '' }}">
+                <td>{{ $index }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.gender }}</td>
+                <td>{{ item.birthdate }}</td>
+                <td>{{ item.join }}</td>
+                <td>{{ item.address }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.phone }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</body>
+<script>
+    var data = [ 
+{ name:  '纪明杰', gender: 'm', birthdate: '1973-3-31', join: '2005-1-15', address: '四川省  阿坝藏族羌族自治州', email: 'Corey19730331@yahoo.cn', phone: '13198561347' },
+{ name:  '邓健柏', gender: 'm', birthdate: '1975-11-30',join:  '2008-1-15',address:  '广东省  潮州市', email: 'Andrew19751130@yeah.net', phone: '13888543794' },
+{ name:  '濮阳语儿',gender:  'f',birthdate:  '1984-1-31',join:  '2012-5-15',address:  '安徽省  巢湖市', email: 'Charlotte19840131@yahoo.cn', phone: '13918704172' },
+{ name:  '嵇志强', gender: 'm', birthdate: '1979-7-31', join: '2007-12-15',address:  '河南省  漯河市', email: 'Levi19790731@21cn.com', phone: '15918104461' },
+{ name:  '居博超', gender: 'm', birthdate: '1986-12-31',join:  '2008-5-15',address:  '江苏省  南通市', email: 'Enoch19861231@yahoo.com.cn', phone: '13825143219' },
+{ name:  '窦弘文', gender: 'm', birthdate: '1974-2-28', join: '2007-5-15', address: '贵州省  安顺市', email: 'Bartholomew19740228@yeah.net', phone: '15953281032' },
+{ name:  '邰浩然', gender: 'm', birthdate: '1989-4-30', join: '2009-2-15', address: '广东省  茂名市', email: 'King19890430@yahoo.com.cn', phone: '13824309057' },
+{ name:  '弓天磊', gender: 'm', birthdate: '1986-12-31',join:  '2005-11-15', address: '安徽省  黄山市', email: 'Bowen19861231@yahoo.cn', phone: '15844437988' } ];
+    
+    angular.module( 'app', [] )
+        .run( function ( $rootScope ) {
+            $rootScope.list = data;
+        });
+
+</script>
+</html>
+
+
+
+<!-- 
+
+var data = [ {   
+    name: '纪明杰', 
+    gender: 'm', 
+    birthdate: '1973-3-31', 
+    join: '2005-1-15', 
+    address: '四川省  阿坝藏族羌族自治州', 
+    email: 'Corey19730331@yahoo.cn', 
+    phone: '13198561347' 
+}, { 
+    name: '邓健柏', 
+    gender: 'm', 
+    birthdate: '1975-11-30',
+    join: '2008-1-15',
+    address: '广东省  潮州市', 
+    email: 'Andrew19751130@yeah.net', 
+    phone: '13888543794' 
+}, { 
+    name: '濮阳语儿',
+    gender: 'f',
+    birthdate: '1984-1-31',
+    join: '2012-5-15',
+    address: '安徽省  巢湖市', 
+    email: 'Charlotte19840131@yahoo.cn', 
+    phone: '13918704172' 
+}, { 
+    name: '嵇志强', 
+    gender: 'm', 
+    birthdate: '1979-7-31', 
+    join: '2007-12-15',
+    address: '河南省  漯河市', 
+    email: 'Levi19790731@21cn.com',
+    phone: '15918104461' },
+{ 
+    name: '居博超', 
+    gender: 'm', 
+    birthdate: '1986-12-31',
+    join: '2008-5-15',
+    address: '江苏省  南通市', 
+    email: 'Enoch19861231@yahoo.com.cn', 
+    phone: '13825143219' 
+}, { 
+    name: '窦弘文', 
+    gender: 'm', 
+    birthdate: '1974-2-28', 
+    join: '2007-5-15', 
+    address: '贵州省  安顺市', 
+    email: 'Bartholomew19740228@yeah.net', 
+    phone: '15953281032' 
+}, { 
+    name: '邰浩然', 
+    gender: 'm', 
+    birthdate: '1989-4-30', 
+    join: '2009-2-15', 
+    address: '广东省  茂名市', 
+    email: 'King19890430@yahoo.com.cn', 
+    phone: '13824309057' 
+}, { 
+    name: '弓天磊', 
+    gender: 'm', 
+    birthdate: '1986-12-31',
+    join: '2005-11-15', 
+    address: '安徽省  黄山市', 
+    email: 'Bowen19861231@yahoo.cn', 
+    phone: '15844437988' 
+} ]; 
+
+
+ -->
