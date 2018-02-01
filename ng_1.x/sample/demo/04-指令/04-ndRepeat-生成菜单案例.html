@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../node_modules/angular/angular.js"></script>
+    <style>
+        .menu * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu li {
+            list-style: none;
+        }
+
+        .menu a {
+            text-decoration: none;
+            display: block;
+            border: 1px solid darkorange;
+            background-color: lightsalmon;
+            width: 160px;
+            padding: 4px 10px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+
+        .menu a + ul a {
+            background-color: #fff;
+            border-top-width: 0px;
+            color: black;
+        }
+        .menu a + ul a:active {
+            color: black;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body ng-app="app">
+    <div class="menu">
+        <ul>
+            <li ng-repeat="item in list">
+                <a href="#">{{ item.title }}</a>
+                <ul class="submenu">
+                    <li ng-repeat="subitem in item.submenus">
+                        <a href="{{ submenu.link }}" target="_blank">{{ subitem.title }}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        angular.module( 'app', [] )
+            .run(function ( $rootScope ) {
+                $rootScope.list = [
+                    { title: '学习', submenus: [
+                        { title: '传智播客', link: 'http://www.itcast.cn/' },
+                        { title: '黑马程序员', link: 'http://www.itheima.com/' },
+                        { title: '博学谷', link: 'https://www.boxuegu.com/' },
+                        { title: '传智专修学院', link: 'http://www.czxy.com/' }
+                    ] },
+                    { title: '前端项目', submenus: [
+                        { title: 'mdn-js', link: 'https://developer.mozilla.org/zh-CN/docs/Web/JavaScript' },
+                        { title: 'jquery', link: 'http://jquery.com/' },
+                        { title: 'node', link: 'https://nodejs.org/en/' },
+                        { title: 'vue', link: 'https://cn.vuejs.org/' },
+                        { title: 'angular', link: 'http://angular.org/' },
+                        { title: 'react', link: 'https://reactjs.org/' },
+                        { title: 'git', link: 'https://github.com/' }
+                    ] },
+                    { title: 'BAT', submenus: [
+                        { title: '百度', link: 'https://www.baidu.com/' },
+                        { title: '阿里', link: 'https://www.aliyun.com' },
+                        { title: '腾讯', link: 'http://www.qq.com/' } 
+                    ] }
+                ];
+            });
+    </script>
+</body>
+</html>
