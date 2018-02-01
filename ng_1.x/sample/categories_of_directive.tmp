@@ -56,17 +56,19 @@
     a   
 
 - 其他指令
-    ng-app
+    
     ngBind
     ngBindHtml(酌情)
     ngController
-    ngIf
     ngInclude
     ngInit
     ngModel
+
+
+- 控制指令
+    ng-app
+    ngIf
     ngRepeat
-
-
 
 
 
