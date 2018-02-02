@@ -8,9 +8,14 @@
     <script src="../node_modules/angular/angular.js"></script>
 </head>
 <body ng-app>
-    <div ng-form>
-        <input type="text"><br>
-        <input type="submit" value="click">
-    </div>
+<!-- <body ng-app="app"> -->
+    <img src="{{ imgUrl }}" alt="图片">
+    <!-- <img ng-src="{{ imgUrl }}" alt="图片">
+    <script>
+        angular.module( 'app', [] )
+            .run( function ( $rootScope ) {
+                $rootScope.imgUrl = 'timg.jpg';
+            });
+    </script> -->
 </body>
 </html>

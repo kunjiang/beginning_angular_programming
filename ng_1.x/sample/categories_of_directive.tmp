@@ -28,8 +28,6 @@
 
 - 样式相关指令
     ngClass
-    ngClassOdd
-    ngClassEven
     ngCloak
     ngShow
     ngHide
