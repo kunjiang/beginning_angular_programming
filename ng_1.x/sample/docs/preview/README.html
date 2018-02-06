@@ -1083,6 +1083,150 @@ var serviceNames = m[ 1 ].split( &#39;,&#39; ).map( name =&gt; name.trim() );
 而不允许修改函数参数的名字, 是因为一旦修改名字, ng 就无法找到对应名字的服务了.
 事实上, 实际应用中, js 代码会被压缩, 而函数参数的名字也会随之更改与变短. 
 因此之前的写法必须替换成本节开始描述的语法形式.</p>
+<pre><code class="lang-javascript">[ &#39;$scope&#39;, function ( $scope ) {
+    // ...
+}]
+</code></pre>
+<p>使用这个语法后, 传入的参数是一个数组. 数组的最后一个参数就是需要调用的函数, 数组的其他参数是指需要传入到函数中对象的名字.
+数组除了最后一个函数外, 其他项的书写顺序就是最终传入函数的参数的顺序. 也就是说在 ng 内部会使用如下方式调用该数组: </p>
+<pre><code class="lang-javascript">var arr = 对应的数组;
+var callback = arr.pop();
+var services = arr.map( name =&gt; {
+    return 找到 name 对应的对象( 就是服务 )
+});
+
+callback.apply( null, services ); // 这里的 null 只是一个占位符
+</code></pre>
+<p>也就是说, 在调用函数的时候传入的参数, 实际上是 ng 中的其他服务( 可以是内置的, 也可以是自定义的 ).
+这样, 在方法中将需要的服务作为参数的方式传入到函数中, 按照需要就传入, 不需要就不传入的思想来使用这些对象. 
+我们将这样的方式称之为 &quot;依赖注入&quot;. </p>
+<p>所以对于简单的写法 ng 内部会获得函数的参数, 但是使用数组语法后, 函数参数就可以随意定义了.</p>
+<p>这里的依赖就是说使用服务提供的方法来完成功能, 即依赖与服务对象( service object ).
+而所谓的注入, 其实就是传入参数. </p>
+<h2 id="-">常用服务举例</h2>
+<p>下面我们列举一些常见服务使用方法.</p>
+<h3 id="-internal">$internal</h3>
+<p>首先介绍一下与 <code>window.setInterval</code> 方法对应的服务 <code>$interval</code>. 在 ng 中所有的东西都应该按照 ng 的逻辑来使用.
+不应该在代码中使用 <code>window</code> 全局对象的方法, 而是应该利用依赖注入的方式将需要的东西注入到函数中( 就是传入函数中 ).
+实施上, ng 中对 js 的 <code>window</code> 对象也实施了包装, 即为 <code>$window</code> 服务.</p>
+<pre><code class="lang-javascript">    angular.module( &#39;app&#39;, [] )
+        .run( [ &#39;$window&#39;, function ( w ) {
+            console.log( w === window ); // =&gt; true
+        } ] );
+</code></pre>
+<p>而 <code>$interval</code> 的服务就是对 <code>setInterval</code> 函数的封装. </p>
+<p>首先 <code>$interval</code> 是一个函数, 其用法与 <code>setInterval</code> 函数几乎一样:</p>
+<pre><code class="lang-javascript">    $interval( function () {
+        // ...
+    }, 时间间隔 );
+</code></pre>
+<p>但是 <code>$interval</code> 返回的是一个 Promise 对象. 使用 <code>$interval.cancel( &lt;promise&gt; )</code> 方法来结束该计时器.</p>
+<p>首先来看这段代码:</p>
+<pre><code class="lang-html">&lt;body ng-app=&quot;app&quot;&gt;
+    &lt;input type=&quot;text&quot; ng-model=&quot;num&quot;&gt;
+&lt;/body&gt;
+&lt;script&gt;    
+    angular.module( &#39;app&#39;, [] )
+        .run([ &#39;$rootScope&#39;, function ( $rootScope ) {
+            var index = 0;
+            setInterval(function () {
+                index++;
+                console.log( index );
+                $rootScope.num = index;
+            }, 1000);
+        }]);
+&lt;/script&gt;
+</code></pre>
+<p>运行起来, 计时器会运行, 但是不会同步到页面中, 如果需要同步, 必须手动调用 <code>$rootScope</code> 的 <code>$apply()</code> 方法.
+这是我们不希望看到的. 那么使用 <code>$interval</code> 服务即可:</p>
+<pre><code class="lang-html">&lt;body ng-app=&quot;app&quot;&gt;
+    &lt;input type=&quot;text&quot; ng-model=&quot;num&quot;&gt;
+&lt;/body&gt;
+&lt;script&gt;    
+    angular.module( &#39;app&#39;, [] )
+        .run([ &#39;$rootScope&#39;, &#39;$interval&#39;, function ( $rootScope, $interval ) {
+            var index = 0;
+            $interval(function () {
+                index++;
+                console.log( index );
+                $rootScope.num = index;
+            }, 1000);
+        }]);
+&lt;/script&gt;
+</code></pre>
+<p>这样就可以实现计时器功能了.</p>
+<h3 id="-http">$http</h3>
+<p>在 ng 中, <code>$http</code> 服务提供了对 ajax 请求的封装. 一般的使用语法是:</p>
+<pre><code class="lang-javascript">$http({
+    method: &#39;GET&#39;,
+    url: &#39;...&#39;
+}).then(function successCallback( data ) {
+    // 请求成功. 返回的数据在 data.data 属性中
+}, function errorCallback( data ) {
+    // 请求失败.
+})
+</code></pre>
+<p>这里, 回调函数的参数 <code>data</code> 提供的属性, 常用的有:</p>
+<ul>
+<li><code>data</code>. 用于返回响应的数据.</li>
+<li><code>status</code>. 用于返回响应状态码.</li>
+<li><code>statusText</code>. 用于返回响应状态文本.</li>
+</ul>
+<p>同时在 ng 中提供了很多快捷方法.</p>
+<ul>
+<li><code>$http.get</code></li>
+<li><code>$http.post</code></li>
+</ul>
+<p>对于其详细用法, 可以<a href="https://code.angularjs.org/1.5.11/docs/api/ng/service/$http">参考文档</a>.</p>
+<h2 id="-">自定义服务</h2>
+<p>自定义服务就是在自己定义对象, 封装自己的数据与方法. 然后利用依赖注入的方式将对象加到对应的函数中使用.</p>
+<p>自定义服务的语法有 5 种, 分别是:</p>
+<ul>
+<li><code>factory</code> 方法</li>
+<li><code>service</code> 方法</li>
+<li><code>constant</code> 方法</li>
+<li><code>value</code> 方法</li>
+<li><code>provider</code> 方法</li>
+</ul>
+<h3 id="-factory-"><code>factory</code> 方法</h3>
+<p><code>factory</code> 即工厂, 该方法用于创造一个服务对象, 使用起来也很简单. 基本语法为:</p>
+<pre><code class="lang-javascript">    module.factory( &#39;服务名&#39;, [ function () { // 允许依赖注入
+        return 对象;
+    }] );
+</code></pre>
+<ul>
+<li>工厂就是用来生产的, 所以该方法中的回调函数, 只需要返回需要创建的服务即可.</li>
+<li>ng 的一大特点就是依赖注入, 因此在定义该服务的时候, 如果需要使用其他服务, 也是可以依赖注入的.</li>
+<li>由于服务只是用于提供某些功能的工具对象, 服务在 ng 中都是单例的, 所以该方法也只会调用一次( 注意 ).</li>
+</ul>
+<h3 id="-service-"><code>service</code> 方法</h3>
+<p><code>service</code> 方法应该来说是 ng 的 &quot;正统方法&quot;. ng 中一般什么东西就有对应的什么方法. 
+例如, 创建控制器, 就有 <code>controller</code> 方法; 后面会介绍过滤器, 就有 <code>filter</code> 方法;
+要创建指令, 就需要使用 <code>directive</code> 方法等. 所以要创建服务, <code>service</code> 方法更加贴切.</p>
+<p>不过在使用上 <code>service</code> 不及 <code>factory</code> 来的简单. 其使用语法为:</p>
+<pre><code class="lang-javascript">    module.service( &#39;服务的名字&#39;, 构造函数 );
+</code></pre>
+<ul>
+<li><code>service</code> 方法接收的是一个构造函数, 也就是说在 ng 内部会将其 <code>new</code> 出来. </li>
+<li>利用这个方式创建服务, 可以使用 面向对象的诸多特征, 例如继承混入等. 不过这个需要创建足够大规模的项目才会有效果( 个人观点 ).</li>
+</ul>
+<h3 id="-constant-value-"><code>constant</code> 方法与 <code>value</code> 方法</h3>
+<p><code>constant</code> 方法与 <code>value</code> 方法的使用语法是一样的, 将某一个常量和变量定义为服务.</p>
+<pre><code class="lang-javascript">    module.constant( &#39;服务名&#39;, 值 );
+    // 或
+    module.value( &#39;服务名&#39;, 值 );
+</code></pre>
+<p>这种方式创建服务一般使用较少, 一般使用 <code>constant</code> 来配置数据, 这个方式也是唯一在 <code>run</code> 方法前定义服务的方式.
+使用 <code>value</code> 方法来创建对象, 函数等. 一般为了简单, 可以使用 <code>value</code> 代替 <code>factory</code> 方法来创建服务.</p>
+<h3 id="-provider-"><code>provider</code> 方法</h3>
+<p>这个方法应该是 ng 中较为底层的方法, 这里只给出使用该方法创建服务的语法. 具体的细节可以深入 ng 的源码实现.</p>
+<pre><code class="lang-javascript">    module.provider( &#39;服务名&#39;, {
+        $get: function () {
+            return 对象;
+        }
+    } );
+</code></pre>
+<p>这里返回的对象即为该服务.</p>
 
           	</article>
         </div>
