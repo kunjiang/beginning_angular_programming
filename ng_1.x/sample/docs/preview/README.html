@@ -1227,6 +1227,110 @@ callback.apply( null, services ); // 这里的 null 只是一个占位符
     } );
 </code></pre>
 <p>这里返回的对象即为该服务.</p>
+<h1 id="-">模块依赖</h1>
+<p>在前文中, 创建一个模块使用的语法为 <code>angular.module( &#39;ng-app 的名字&#39;, [] )</code>. 这个语法在创建一个命名的模块. 
+那么这个方法中的参数 <code>[]</code> 有什么意义呢? 接下来我们老套路这个具体的用法.</p>
+<h2 id="-">创建与获得模块</h2>
+<h3 id="-">传统方式解决全局污染问题</h3>
+<p>在传统 js 开发中, 有一个非常容易遗留的危险, 就是全局作用域污染. 为了解决这个文件, 我们使用了闭包, 将所有的代码都包裹在闭包中.
+但是依旧需要将一些数据通过返回值, 或其他办, 将一些需要被公开的数据映射到全局对象 <code>window</code> 上. </p>
+<pre><code class="lang-javascript">// jquery 模型( 1.7 以前)
+(function ( window, undefined ) {
+    // ...
+    window.jQuery = window.$ = jQuery; // 将 jQuery 与 $ 映射到 全局对象中.
+})( window );
+</code></pre>
+<p>但是这个方式依旧不能根本解决问题. 因为依旧会在全局作用域中保留部分数据. 这个也是没有办法的, 因为数据需要共享.</p>
+<h3 id="ng-">ng 中处理办法</h3>
+<p>但是在 ng 中会更简单. 使用 <code>angular.module( &#39;模块名&#39;, [] )</code> 来创建模块. 
+这里值得注意的是:</p>
+<ul>
+<li>模块不是必须与页面的 <code>ng-app</code> 相关联, 虽然必须有一个要关联起来. 但是在整个项目中 可以存在多个模块.</li>
+<li>模块的创建不需要使用变量来引用. 在左边放置一个变量接收模块, 是为了在后面更简单的使用模块. 事实上 ng 还有一个语法专门用于获得模块.</li>
+</ul>
+<p>使用下面语法:</p>
+<pre><code class="lang-javascript">    angular.module( &#39;模块名&#39; )
+</code></pre>
+<ul>
+<li>这个方法的调用需要注意的是, <code>module</code> 的参数只有一个, 即模块的名字, 没有第二个参数( 很奇怪吧 ).</li>
+<li>这个方法不是在创建模块, 而是在获得模块. 即在 ng 内部找寻指定名字的模块.</li>
+<li>如果这个名字的模块不存在, 就会报错, 如果存在, 则返回该模块.</li>
+</ul>
+<p>这样的一个简单的用法可以从根本上解决作用域污染的问题, 因为可以如下使用:</p>
+<pre><code class="lang-javascript">(function () {
+    // 创建模块
+    angular.module( &#39;moduleApp&#39;, [] );
+})();
+
+
+(function () {
+    // 使用模块
+    angular.module( &#39;moduleApp&#39; )
+        .run( [ &#39;$rootScope&#39;, function ( $rootScope ) {
+            // ...
+        } ] )
+        .controller( &#39;mainController&#39;, [ &#39;$scope&#39;, function ( $scope ) {
+            // ...
+        } ] );
+})();
+</code></pre>
+<p>很显然, 没有在全局范围内引入多余变量. </p>
+<p>不仅如此, ng 还可以多个模块协同使用.</p>
+<h2 id="-">加载其他模块</h2>
+<p>在 ng 中可以创建多个模块, 但是实际开发中会人为约束一些模块的逻辑关系. 
+例如在整个程序中可以有多个模块, 但是我们总是会提供一个主模块, 和其他工具模块. 一般工具模块会按照功能分类.
+例如: 核心的主模块或用于加载配置核心功能. 而后将不同页面利用不同模块进行定义, 定义多个页面级模块.
+还有在一些大规模项目中, 可能需要自己定义一些服务, 指令, 或者过滤器. 那么可以将这些单独的定义成服务模块,
+指令模块, 以及过滤器模块等.</p>
+<p>上述模块的定义方式不是唯一的, 只是认为给出的一些约束, 定义方法. 事实上模块与模块之间都是平等的.
+就好比一个公司的员工都是平等的人, 但是职位从属是有不同的划分.</p>
+<p>我们在命名模块的时候为了明确其关系, 常常使用点分命名的方式. 例如核心模块叫 <code>&quot;mainApp&quot;</code>, 
+该项目中的服务模块可以称为 <code>&quot;mainApp.services&quot;</code>.</p>
+<p>那么多个模块如何协作呢? 使用下面语法:</p>
+<pre><code class="lang-javascript">    angular.module( &#39;mainApp&#39;, [ &#39;mainApp.services&#39; ] )
+</code></pre>
+<p>这里就需要数组参数了, 将需要加载的模块名放到数组中即可, 可以加载多个模块.</p>
+<h2 id="-">共享其他模块中的数据</h2>
+<p>我们通过一些小案例来说明其使用. 
+在 ng 的包中有一个 <code>angular-cookies.js</code> 文件. 它提供了 ng 对 cookie 操作的功能. 我们可以参考文档:</p>
+<p><img src="./imgs/2018-02-06_231741.png" alt=""></p>
+<p>在该模块中提供了两个服务:</p>
+<ul>
+<li>一个是 <code>$cookies</code>, 用于操作浏览器的 cookie 数据.</li>
+<li>一个是 <code>$cookieStore</code>, 用于操作浏览器的 localStorage. </li>
+</ul>
+<p>这里模块利用一个按钮在 浏览器中存储一个 cookie 数据来看看如何使用这个模块.</p>
+<ul>
+<li>首先查看文档, 这个模块的名字是: <code>&quot;ngCookies&quot;</code>, 索引引入代码写成( 当然需要先引入 js 文件 ):</li>
+</ul>
+<pre><code class="lang-javascript">    angular.module( &#39;mainApp&#39;, [ &#39;ngCookies&#39; ] );
+</code></pre>
+<ul>
+<li>然后在页面中提供 <code>ng-click</code> 指令:</li>
+</ul>
+<pre><code class="lang-html">&lt;body ng-app=&quot;mainApp&quot;&gt; 
+    &lt;button ng-click=&quot;saveCookie()&quot;&gt;保存 cookie &lt;/button&gt;
+&lt;/body&gt;
+</code></pre>
+<ul>
+<li>在 <code>$rootScope</code> 中注入服务, 并使用 <code>$cookies</code> 服务的 <code>put</code> 方法写入 cookie 数据:</li>
+</ul>
+<pre><code class="lang-javascript">    angular.module( &#39;mainApp&#39;, [ &#39;ngCookies&#39; ] )
+        .run( [ &#39;$rootScope&#39;, &#39;$cookies&#39;, function ( $rootScope, $cookie ) {
+            $rootScope.saveCookie = function () {
+
+                $cookie.put( &#39;cookieName&#39;, &#39;cookieValue&#39; );
+
+            };
+        } ] );
+</code></pre>
+<ul>
+<li>然后打开浏览器的调试工具查看:</li>
+</ul>
+<p>点击按钮之前:</p>
+<p><img src="./imgs/2018-02-06_232910.png" alt=""></p>
+<p>点击按钮之后:</p>
+<p><img src="./imgs/2018-02-06_232927.png" alt=""></p>
 
           	</article>
         </div>
